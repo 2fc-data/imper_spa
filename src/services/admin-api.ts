@@ -153,11 +153,15 @@ export interface Delegation {
 }
 
 export const delegationApi = {
+  list: () =>
+    api.get<Delegation[]>('/iam/delegations').then((r) => r.data),
   listByUser: (userId: string) =>
     api.get<Delegation[]>(`/iam/delegations/${userId}`).then((r) => r.data),
   create: (data: { delegatorId: string; delegateId: string; roleId: string; startDate: string; endDate: string; reason?: string }) =>
     api.post<Delegation>('/iam/delegations', data).then((r) => r.data),
-  remove: (id: string) => api.delete(`/iam/delegations/${id}`),
+  update: (id: string, data: { reason?: string; endDate?: string }) =>
+    api.patch<Delegation>(`/iam/delegations/${id}`, data).then((r) => r.data),
+  revoke: (id: string) => api.delete(`/iam/delegations/${id}`),
 }
 
 // ─── Configuration ───────────────────────────────────────────────────────────

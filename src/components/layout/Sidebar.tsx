@@ -19,6 +19,10 @@ import {
   GitBranch,
   Landmark,
   ChevronDown,
+  Briefcase,
+  ShieldCheck,
+  HardHat,
+  Package,
 } from 'lucide-react'
 import { useUIStore } from '@/stores/ui.store'
 import { useAuthStore } from '@/stores/auth.store'
@@ -26,13 +30,18 @@ import { cn } from '@/lib/utils'
 
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/crm/leads', icon: Users, label: 'Leads' },
-  { to: '/crm/funil', icon: GitPullRequest, label: 'Funil' },
-  { to: '/crm/propostas', icon: FileText, label: 'Propostas' },
-  { to: '/crm/agenda', icon: Calendar, label: 'Agenda' },
-  { to: '/configuracoes/servicos', icon: Wrench, label: 'Serviços' },
   { to: '/notificacoes', icon: Bell, label: 'Notificações' },
   { to: '/configuracoes', icon: Settings, label: 'Configurações' },
+]
+
+const leadsItems = [
+  { to: '/crm/leads', icon: Users, label: 'Leads' },
+  { to: '/crm/funil', icon: GitPullRequest, label: 'Funil' },
+]
+
+const comercialItems = [
+  { to: '/crm/propostas', icon: FileText, label: 'Propostas' },
+  { to: '/crm/agenda', icon: Calendar, label: 'Agenda' },
 ]
 
 const adminItems = [
@@ -44,12 +53,23 @@ const adminItems = [
   { to: '/admin/permissoes', icon: Key, label: 'Permissões' },
   { to: '/admin/delegacoes', icon: UserCog, label: 'Delegações' },
   { to: '/admin/configuracao', icon: Settings, label: 'Configuração' },
+  { to: '/admin/servicos', icon: Wrench, label: 'Serviços' },
+  { to: '/admin/clientes', icon: Briefcase, label: 'Clientes' },
+  { to: '/admin/audit', icon: ShieldCheck, label: 'Auditoria' },
+  { to: '/admin/colaboradores', icon: HardHat, label: 'Colaboradores' },
+]
+
+const infraItems = [
+  { to: '/infra/patrimonio', icon: Package, label: 'Patrimônio' },
 ]
 
 export function Sidebar() {
   const { sidebarOpen, toggleSidebar } = useUIStore()
   const { logout } = useAuthStore()
   const [adminOpen, setAdminOpen] = useState(false)
+  const [infraOpen, setInfraOpen] = useState(false)
+  const [leadsOpen, setLeadsOpen] = useState(false)
+  const [comercialOpen, setComercialOpen] = useState(false)
 
   return (
     <aside
@@ -93,6 +113,104 @@ export function Sidebar() {
           </NavLink>
         ))}
 
+        {/* Leads group */}
+        <div className="pt-2">
+          <button
+            onClick={() => setLeadsOpen(!leadsOpen)}
+            className={cn(
+              'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+              leadsOpen
+                ? 'bg-[var(--sidebar-accent)] text-[var(--sidebar-accent-foreground)]'
+                : 'text-[var(--sidebar-foreground)] opacity-70 hover:bg-[var(--sidebar-accent)] hover:opacity-100'
+            )}
+          >
+            <Users size={20} />
+            {sidebarOpen && (
+              <>
+                <span className="hidden sm:inline flex-1 text-left">Leads</span>
+                <ChevronDown
+                  size={16}
+                  className={cn(
+                    'hidden sm:inline transition-transform duration-200',
+                    leadsOpen && 'rotate-180'
+                  )}
+                />
+              </>
+            )}
+          </button>
+
+          {leadsOpen && sidebarOpen && (
+            <div className="ml-4 mt-1 space-y-1 border-l border-[var(--sidebar-border)] pl-3">
+              {leadsItems.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={({ isActive }) =>
+                    cn(
+                      'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                      isActive
+                        ? 'bg-[var(--sidebar-accent)] text-[var(--sidebar-accent-foreground)]'
+                        : 'text-[var(--sidebar-foreground)] opacity-70 hover:bg-[var(--sidebar-accent)] hover:opacity-100'
+                    )
+                  }
+                >
+                  <item.icon size={16} />
+                  <span className="hidden sm:inline">{item.label}</span>
+                </NavLink>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Comercial group */}
+        <div className="pt-2">
+          <button
+            onClick={() => setComercialOpen(!comercialOpen)}
+            className={cn(
+              'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+              comercialOpen
+                ? 'bg-[var(--sidebar-accent)] text-[var(--sidebar-accent-foreground)]'
+                : 'text-[var(--sidebar-foreground)] opacity-70 hover:bg-[var(--sidebar-accent)] hover:opacity-100'
+            )}
+          >
+            <Briefcase size={20} />
+            {sidebarOpen && (
+              <>
+                <span className="hidden sm:inline flex-1 text-left">Comercial</span>
+                <ChevronDown
+                  size={16}
+                  className={cn(
+                    'hidden sm:inline transition-transform duration-200',
+                    comercialOpen && 'rotate-180'
+                  )}
+                />
+              </>
+            )}
+          </button>
+
+          {comercialOpen && sidebarOpen && (
+            <div className="ml-4 mt-1 space-y-1 border-l border-[var(--sidebar-border)] pl-3">
+              {comercialItems.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={({ isActive }) =>
+                    cn(
+                      'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                      isActive
+                        ? 'bg-[var(--sidebar-accent)] text-[var(--sidebar-accent-foreground)]'
+                        : 'text-[var(--sidebar-foreground)] opacity-70 hover:bg-[var(--sidebar-accent)] hover:opacity-100'
+                    )
+                  }
+                >
+                  <item.icon size={16} />
+                  <span className="hidden sm:inline">{item.label}</span>
+                </NavLink>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Administração group */}
         <div className="pt-2">
           <button
@@ -122,6 +240,55 @@ export function Sidebar() {
           {adminOpen && sidebarOpen && (
             <div className="ml-4 mt-1 space-y-1 border-l border-[var(--sidebar-border)] pl-3">
               {adminItems.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={({ isActive }) =>
+                    cn(
+                      'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                      isActive
+                        ? 'bg-[var(--sidebar-accent)] text-[var(--sidebar-accent-foreground)]'
+                        : 'text-[var(--sidebar-foreground)] opacity-70 hover:bg-[var(--sidebar-accent)] hover:opacity-100'
+                    )
+                  }
+                >
+                  <item.icon size={16} />
+                  <span className="hidden sm:inline">{item.label}</span>
+                </NavLink>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Infraestrutura group */}
+        <div className="pt-2">
+          <button
+            onClick={() => setInfraOpen(!infraOpen)}
+            className={cn(
+              'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+              infraOpen
+                ? 'bg-[var(--sidebar-accent)] text-[var(--sidebar-accent-foreground)]'
+                : 'text-[var(--sidebar-foreground)] opacity-70 hover:bg-[var(--sidebar-accent)] hover:opacity-100'
+            )}
+          >
+            <Package size={20} />
+            {sidebarOpen && (
+              <>
+                <span className="hidden sm:inline flex-1 text-left">Infraestrutura</span>
+                <ChevronDown
+                  size={16}
+                  className={cn(
+                    'hidden sm:inline transition-transform duration-200',
+                    infraOpen && 'rotate-180'
+                  )}
+                />
+              </>
+            )}
+          </button>
+
+          {infraOpen && sidebarOpen && (
+            <div className="ml-4 mt-1 space-y-1 border-l border-[var(--sidebar-border)] pl-3">
+              {infraItems.map((item) => (
                 <NavLink
                   key={item.to}
                   to={item.to}

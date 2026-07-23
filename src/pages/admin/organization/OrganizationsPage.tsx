@@ -23,7 +23,7 @@ export function OrganizationsPage() {
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [isEditing, setIsEditing] = useState<string | null>(null)
 
-  const { register, handleSubmit, control, reset, formState: { errors }, setValue } = useForm<OrgFormData>({
+  const { register, handleSubmit, control, reset, formState: { errors } } = useForm<OrgFormData>({
     resolver: zodResolver(orgSchema) as any,
   })
 
