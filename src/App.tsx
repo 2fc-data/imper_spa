@@ -15,6 +15,10 @@ import { ProposalsPage } from './pages/crm/propostas/ProposalsPage'
 import { ProposalDetailPage } from './pages/crm/propostas/ProposalDetailPage'
 import { CreateProposalPage } from './pages/crm/propostas/CreateProposalPage'
 import { AgendaPage } from './pages/crm/agenda/AgendaPage'
+import { ClientsPage } from './pages/crm/clientes/ClientsPage'
+import { ClientDetailPage } from './pages/crm/clientes/ClientDetailPage'
+import { CreateClientPage } from './pages/crm/clientes/CreateClientPage'
+import { AuditPage } from './pages/crm/audit/AuditPage'
 import { SettingsPage } from './pages/configuracoes/SettingsPage'
 import { ServicesManagementPage } from './pages/configuracoes/ServicesManagementPage'
 import { NotificationsPage } from './pages/notificacoes/NotificationsPage'
@@ -26,6 +30,12 @@ import { RolesPage } from './pages/admin/iam/RolesPage'
 import { PermissionsPage } from './pages/admin/iam/PermissionsPage'
 import { DelegationsPage } from './pages/admin/iam/DelegationsPage'
 import { ConfigurationPage } from './pages/admin/configuration/ConfigurationPage'
+import { ColaboradoresPage } from './pages/infra/colaboradores/ColaboradoresPage'
+import { CreateColaboradorPage } from './pages/infra/colaboradores/CreateColaboradorPage'
+import { ColaboradorDetailPage } from './pages/infra/colaboradores/ColaboradorDetailPage'
+import { PatrimonioPage } from './pages/infra/patrimonio/PatrimonioPage'
+import { CreateAssetPage } from './pages/infra/patrimonio/CreateAssetPage'
+import { AssetDetailPage } from './pages/infra/patrimonio/AssetDetailPage'
 import { useDarkMode } from './hooks/useDarkMode'
 
 const queryClient = new QueryClient()
@@ -64,7 +74,6 @@ function App() {
 
             {/* Config */}
             <Route path="/configuracoes" element={<SettingsPage />} />
-            <Route path="/configuracoes/servicos" element={<ServicesManagementPage />} />
             <Route path="/notificacoes" element={<NotificationsPage />} />
 
             {/* Admin — Organização */}
@@ -80,6 +89,23 @@ function App() {
 
             {/* Admin — Configuração */}
             <Route path="/admin/configuracao" element={<ConfigurationPage />} />
+            <Route path="/admin/servicos" element={<ServicesManagementPage />} />
+
+            {/* Admin — Clientes & Auditoria */}
+            <Route path="/admin/clientes" element={<ClientsPage />} />
+            <Route path="/admin/clientes/novo" element={<CreateClientPage />} />
+            <Route path="/admin/clientes/:id" element={<ClientDetailPage />} />
+            <Route path="/admin/audit" element={<AuditPage />} />
+
+            {/* Admin — Colaboradores */}
+            <Route path="/admin/colaboradores" element={<ColaboradoresPage />} />
+            <Route path="/admin/colaboradores/novo" element={<CreateColaboradorPage />} />
+            <Route path="/admin/colaboradores/:id" element={<ColaboradorDetailPage />} />
+
+            {/* Infra — Patrimônio */}
+            <Route path="/infra/patrimonio" element={<PatrimonioPage />} />
+            <Route path="/infra/patrimonio/novo" element={<CreateAssetPage />} />
+            <Route path="/infra/patrimonio/:id" element={<AssetDetailPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

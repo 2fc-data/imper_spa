@@ -8,10 +8,12 @@ import { delegationApi, type Delegation } from '@/services/admin-api'
 import { FormError } from '@/components/ui/FormError'
 
 const delegationSchema = z.object({
-  fromUserId: z.string().min(1, 'Obrigatório'),
-  toUserId: z.string().min(1, 'Obrigatório'),
+  delegatorId: z.string().min(1, 'Obrigatório'),
+  delegateId: z.string().min(1, 'Obrigatório'),
+  roleId: z.string().min(1, 'Obrigatório'),
+  startDate: z.string().min(1, 'Obrigatório'),
+  endDate: z.string().min(1, 'Obrigatório'),
   reason: z.string().max(255, 'Máximo 255 caracteres').optional(),
-  expiresAt: z.string().optional(),
 })
 
 type DelegationFormData = z.infer<typeof delegationSchema>
@@ -39,7 +41,7 @@ export function DelegationsPage() {
   })
 
   const updateDelegation = useMutation({
-    mutationFn: ({ id, ...data }: { id: string; reason?: string; expiresAt?: string }) =>
+    mutationFn: ({ id, ...data }: { id: string; reason?: string; endDate?: string }) =>
       delegationApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-delegations'] })
@@ -63,14 +65,16 @@ export function DelegationsPage() {
       updateDelegation.mutate({
         id: isEditing,
         reason: data.reason || undefined,
-        expiresAt: data.expiresAt || undefined,
+        endDate: data.endDate || undefined,
       })
     } else {
       createDelegation.mutate({
-        fromUserId: data.fromUserId,
-        toUserId: data.toUserId,
+        delegatorId: data.delegatorId,
+        delegateId: data.delegateId,
+        roleId: data.roleId,
+        startDate: data.startDate,
+        endDate: data.endDate,
         reason: data.reason || undefined,
-        expiresAt: data.expiresAt || undefined,
       })
     }
   }
@@ -78,10 +82,12 @@ export function DelegationsPage() {
   const handleEdit = (del: Delegation) => {
     setIsEditing(del.id)
     reset({
-      fromUserId: del.fromUserId,
-      toUserId: del.toUserId,
+      delegatorId: del.delegatorId,
+      delegateId: del.delegateId,
+      roleId: del.roleId,
+      startDate: del.startDate?.split('T')[0] || '',
+      endDate: del.endDate?.split('T')[0] || '',
       reason: del.reason || '',
-      expiresAt: del.expiresAt?.split('T')[0] || '',
     })
     setIsFormOpen(true)
   }
@@ -119,24 +125,34 @@ export function DelegationsPage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1.5">Usuário Origem *</label>
+              <label className="block text-sm font-medium mb-1.5">Usuário Origem (Delegador) *</label>
               <input
-                {...register('fromUserId')}
+                {...register('delegatorId')}
                 placeholder="ID do usuário que delega"
                 disabled={!!isEditing}
                 className="w-full px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--card-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] disabled:opacity-50"
               />
-              <FormError message={errors.fromUserId?.message} />
+              <FormError message={errors.delegatorId?.message} />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1.5">Usuário Destino *</label>
+              <label className="block text-sm font-medium mb-1.5">Usuário Destino (Delegado) *</label>
               <input
-                {...register('toUserId')}
+                {...register('delegateId')}
                 placeholder="ID do usuário que recebe"
                 disabled={!!isEditing}
                 className="w-full px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--card-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] disabled:opacity-50"
               />
-              <FormError message={errors.toUserId?.message} />
+              <FormError message={errors.delegateId?.message} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1.5">ID da Role *</label>
+              <input
+                {...register('roleId')}
+                placeholder="ID da role a delegar"
+                disabled={!!isEditing}
+                className="w-full px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--card-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] disabled:opacity-50"
+              />
+              <FormError message={errors.roleId?.message} />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">Motivo</label>
@@ -148,12 +164,23 @@ export function DelegationsPage() {
               <FormError message={errors.reason?.message} />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1.5">Data de Expiração</label>
+              <label className="block text-sm font-medium mb-1.5">Data de Início *</label>
               <input
-                {...register('expiresAt')}
+                {...register('startDate')}
+                type="date"
+                disabled={!!isEditing}
+                className="w-full px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--card-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] disabled:opacity-50"
+              />
+              <FormError message={errors.startDate?.message} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1.5">Data de Expiração *</label>
+              <input
+                {...register('endDate')}
                 type="date"
                 className="w-full px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--card-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
               />
+              <FormError message={errors.endDate?.message} />
             </div>
           </div>
           <div className="flex items-center justify-end gap-2 pt-2">
@@ -188,9 +215,11 @@ export function DelegationsPage() {
             <table className="w-full border-collapse text-left text-sm">
               <thead className="bg-[var(--secondary)] text-[var(--muted-foreground)] uppercase text-xs">
                 <tr>
-                  <th className="px-6 py-3 font-semibold">Origem</th>
-                  <th className="px-6 py-3 font-semibold">Destino</th>
+                  <th className="px-6 py-3 font-semibold">Delegador</th>
+                  <th className="px-6 py-3 font-semibold">Delegado</th>
+                  <th className="px-6 py-3 font-semibold">Role</th>
                   <th className="px-6 py-3 font-semibold">Motivo</th>
+                  <th className="px-6 py-3 font-semibold">Início</th>
                   <th className="px-6 py-3 font-semibold">Expira em</th>
                   <th className="px-6 py-3 font-semibold">Status</th>
                   <th className="px-6 py-3 font-semibold text-right">Ações</th>
@@ -199,11 +228,15 @@ export function DelegationsPage() {
               <tbody className="divide-y divide-[var(--border)]">
                 {delegations?.map((del) => (
                   <tr key={del.id} className="hover:bg-[var(--secondary)]/20 transition-colors">
-                    <td className="px-6 py-4 font-mono text-xs text-[var(--card-foreground)]">{del.fromUserId}</td>
-                    <td className="px-6 py-4 font-mono text-xs text-[var(--card-foreground)]">{del.toUserId}</td>
+                    <td className="px-6 py-4 font-mono text-xs text-[var(--card-foreground)]">{del.delegatorId}</td>
+                    <td className="px-6 py-4 font-mono text-xs text-[var(--card-foreground)]">{del.delegateId}</td>
+                    <td className="px-6 py-4 font-mono text-xs text-[var(--card-foreground)]">{del.roleId}</td>
                     <td className="px-6 py-4 text-[var(--muted-foreground)]">{del.reason || '-'}</td>
                     <td className="px-6 py-4 text-[var(--muted-foreground)]">
-                      {del.expiresAt ? new Date(del.expiresAt).toLocaleDateString('pt-BR') : 'Sem prazo'}
+                      {del.startDate ? new Date(del.startDate).toLocaleDateString('pt-BR') : '-'}
+                    </td>
+                    <td className="px-6 py-4 text-[var(--muted-foreground)]">
+                      {del.endDate ? new Date(del.endDate).toLocaleDateString('pt-BR') : 'Sem prazo'}
                     </td>
                     <td className="px-6 py-4">
                       {del.isActive ? (
