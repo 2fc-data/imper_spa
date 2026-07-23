@@ -18,6 +18,14 @@ import { AgendaPage } from './pages/crm/agenda/AgendaPage'
 import { SettingsPage } from './pages/configuracoes/SettingsPage'
 import { ServicesManagementPage } from './pages/configuracoes/ServicesManagementPage'
 import { NotificationsPage } from './pages/notificacoes/NotificationsPage'
+import { OrganizationsPage } from './pages/admin/organization/OrganizationsPage'
+import { DepartmentsPage } from './pages/admin/organization/DepartmentsPage'
+import { TeamsPage } from './pages/admin/organization/TeamsPage'
+import { CostCentersPage } from './pages/admin/organization/CostCentersPage'
+import { RolesPage } from './pages/admin/iam/RolesPage'
+import { PermissionsPage } from './pages/admin/iam/PermissionsPage'
+import { DelegationsPage } from './pages/admin/iam/DelegationsPage'
+import { ConfigurationPage } from './pages/admin/configuration/ConfigurationPage'
 import { useDarkMode } from './hooks/useDarkMode'
 
 const queryClient = new QueryClient()
@@ -58,6 +66,20 @@ function App() {
             <Route path="/configuracoes" element={<SettingsPage />} />
             <Route path="/configuracoes/servicos" element={<ServicesManagementPage />} />
             <Route path="/notificacoes" element={<NotificationsPage />} />
+
+            {/* Admin — Organização */}
+            <Route path="/admin/organizacoes" element={<OrganizationsPage />} />
+            <Route path="/admin/departamentos" element={<DepartmentsPage />} />
+            <Route path="/admin/equipes" element={<TeamsPage />} />
+            <Route path="/admin/centros-custo" element={<CostCentersPage />} />
+
+            {/* Admin — IAM */}
+            <Route path="/admin/cargos" element={<RolesPage />} />
+            <Route path="/admin/permissoes" element={<PermissionsPage />} />
+            <Route path="/admin/delegacoes" element={<DelegationsPage />} />
+
+            {/* Admin — Configuração */}
+            <Route path="/admin/configuracao" element={<ConfigurationPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

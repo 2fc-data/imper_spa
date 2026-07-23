@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard,
@@ -11,6 +12,13 @@ import {
   ChevronRight,
   Bell,
   Wrench,
+  Shield,
+  Building2,
+  UserCog,
+  Key,
+  GitBranch,
+  Landmark,
+  ChevronDown,
 } from 'lucide-react'
 import { useUIStore } from '@/stores/ui.store'
 import { useAuthStore } from '@/stores/auth.store'
@@ -27,9 +35,21 @@ const navItems = [
   { to: '/configuracoes', icon: Settings, label: 'Configurações' },
 ]
 
+const adminItems = [
+  { to: '/admin/organizacoes', icon: Building2, label: 'Organizações' },
+  { to: '/admin/departamentos', icon: GitBranch, label: 'Departamentos' },
+  { to: '/admin/equipes', icon: Users, label: 'Equipes' },
+  { to: '/admin/centros-custo', icon: Landmark, label: 'Centros de Custo' },
+  { to: '/admin/cargos', icon: Shield, label: 'Cargos' },
+  { to: '/admin/permissoes', icon: Key, label: 'Permissões' },
+  { to: '/admin/delegacoes', icon: UserCog, label: 'Delegações' },
+  { to: '/admin/configuracao', icon: Settings, label: 'Configuração' },
+]
+
 export function Sidebar() {
   const { sidebarOpen, toggleSidebar } = useUIStore()
   const { logout } = useAuthStore()
+  const [adminOpen, setAdminOpen] = useState(false)
 
   return (
     <aside
@@ -72,6 +92,55 @@ export function Sidebar() {
             {sidebarOpen && <span className="hidden sm:inline">{item.label}</span>}
           </NavLink>
         ))}
+
+        {/* Administração group */}
+        <div className="pt-2">
+          <button
+            onClick={() => setAdminOpen(!adminOpen)}
+            className={cn(
+              'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+              adminOpen
+                ? 'bg-[var(--sidebar-accent)] text-[var(--sidebar-accent-foreground)]'
+                : 'text-[var(--sidebar-foreground)] opacity-70 hover:bg-[var(--sidebar-accent)] hover:opacity-100'
+            )}
+          >
+            <Shield size={20} />
+            {sidebarOpen && (
+              <>
+                <span className="hidden sm:inline flex-1 text-left">Administração</span>
+                <ChevronDown
+                  size={16}
+                  className={cn(
+                    'hidden sm:inline transition-transform duration-200',
+                    adminOpen && 'rotate-180'
+                  )}
+                />
+              </>
+            )}
+          </button>
+
+          {adminOpen && sidebarOpen && (
+            <div className="ml-4 mt-1 space-y-1 border-l border-[var(--sidebar-border)] pl-3">
+              {adminItems.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={({ isActive }) =>
+                    cn(
+                      'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                      isActive
+                        ? 'bg-[var(--sidebar-accent)] text-[var(--sidebar-accent-foreground)]'
+                        : 'text-[var(--sidebar-foreground)] opacity-70 hover:bg-[var(--sidebar-accent)] hover:opacity-100'
+                    )
+                  }
+                >
+                  <item.icon size={16} />
+                  <span className="hidden sm:inline">{item.label}</span>
+                </NavLink>
+              ))}
+            </div>
+          )}
+        </div>
       </nav>
 
       <div className="absolute bottom-0 left-0 right-0 p-3">
